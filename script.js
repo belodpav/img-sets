@@ -1,4 +1,4 @@
-;( function(ImgObj) {
+;( function(PictureBox) {
   var MAX_TIME_OUT_REQUEST = 10000;
   // Constructor
   function Gallery ( settings ) {
@@ -20,7 +20,7 @@
   function buildNewImages( data ) {
     var newImg, imgList = [];
     data.forEach(function( item ) {
-      newImg = new ImgObj( item );
+      newImg = new PictureBox( item );
       imgList.push( newImg );
     });
     return imgList;
@@ -78,5 +78,5 @@
   }
 
   window.Gallery = Gallery;
-})(ImgObj);
+})( PictureBox );
 
