@@ -6,9 +6,12 @@
     this._alt = settings.alt;
     this._title = settings.alt;
     this._parent = settings.parent;
+    this._likes = settings.hearts;
 
-    this._likes = 0;
-    this._id = generateId();
+    // callback function
+    this._onChanged = settings.onChanged;
+    this._id = settings.id;
+
     this._core = getImgElement( this._src, this._alt, this._title );
     
     // Events Initialisation 
@@ -59,13 +62,7 @@
   function _updateLikesCount() {
     this._i_likes.innerText = this._likes;
   }
-  /**
-   * @param {}
-   * @return {string}
-   */
-  function generateId() {
-    return '' + Date.now();
-  }
+
   /**
    * @param {string} src
    * @param {string} alt
@@ -111,6 +108,11 @@
     this._i_likes = likes;
     return pict; 
   }
+
+  
+  function onChange() {
+    this._onChanged( { hearts: this._likes, id: this._id } );
+  }
   /**
    * @param {}
    * @return {}
@@ -118,11 +120,14 @@
   function _initEvents() {
     var self = this;
     this._core.addEventListener('click', function() {
-      _increaseLikesCount.call(self);
-      _updateLikesCount.call(self);
+      _increaseLikesCount.call( self );
+      _updateLikesCount.call( self );
+      if ( self._onChanged ) {
+        onChange.call( self );
+      }
     });
   }
   
   window.PictureBox = PictureBox;
-  
+
 })();

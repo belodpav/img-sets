@@ -16,11 +16,11 @@
       font: 300 16px/24px Helvetica, Arial, sans-serif;
       background: #f9fbff;
     }
-    #root img {
+    .gallery img {
       max-width: 100%;
       //max-width: 150px;
     }
-    #root {
+    .gallery {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -57,20 +57,43 @@
   <script type="text/javascript">
     var settings = {
       selector: '#root',
-      ajax: true,
+      ajax: false,
       source: 'https://www.mocky.io/v2/5a2fbc862d00004918a83b88',
       images: [
         {
           name: "Nastya",
           src: "https://i.pinimg.com/736x/dd/52/be/dd52be74743525c2e8b2c18246cc3544--blowing-bubbles-selfie-ideas.jpg",
           alt: "nastyas photo",
-          title: "hey"
+          title: "hey",
+          hearts: 3
         },
         {
-          name: "Nastya",
+          name: "Masha",
           src: "https://i.pinimg.com/736x/dd/52/be/dd52be74743525c2e8b2c18246cc3544--blowing-bubbles-selfie-ideas.jpg",
           alt: "nastyas photo",
-          title: "hey"
+          title: "hey",
+          hearts: 0
+        },
+        {
+          name: "Sasha",
+          src: "https://i.pinimg.com/736x/dd/52/be/dd52be74743525c2e8b2c18246cc3544--blowing-bubbles-selfie-ideas.jpg",
+          alt: "nastyas photo",
+          title: "hey",
+          hearts: 10
+        },
+        {
+          name: "Kira",
+          src: "https://i.pinimg.com/736x/dd/52/be/dd52be74743525c2e8b2c18246cc3544--blowing-bubbles-selfie-ideas.jpg",
+          alt: "nastyas photo",
+          title: "hey",
+          hearts: 10
+        },
+        {
+          name: "Gia",
+          src: "https://i.pinimg.com/736x/dd/52/be/dd52be74743525c2e8b2c18246cc3544--blowing-bubbles-selfie-ideas.jpg",
+          alt: "nastyas photo",
+          title: "hey",
+          hearts: 1
         }
       ]
     };
