@@ -1,27 +1,33 @@
 ;( function(PictureBox) {
   var MAX_TIME_OUT_REQUEST = 10000;
   // Constructor
-  function Gallery ( settings ) {
+  function Gallery (settings) {
     var root, data, galElement; 
     
-    root = document.querySelector( settings.selector );
+    root = document.querySelector(settings.selector);
     galElement = document.createElement('div');
     galElement.className = 'gallery';
-    root.appendChild( galElement );
+    root.appendChild(galElement);
 
     this._wrapElement = galElement;
 
-    if ( settings.ajax ) {
-      connectWithXHR.call( this, settings.source );
-    } else if ( settings.images && typeof settings.images === 'object' ) {
+    if (settings.ajax) {
+      connectWithXHR.call(this, settings.source);
+    } else if (settings.images && typeof settings.images === 'object') {
       data = settings.images;
-      addDataAndRender.call( this, data );
+      initGalleryItems.call(this, data);
+      updateGallery.call(this);
     }
   }
 
   // Private 
-  // Build new Images
-  function buildNewImages( data ) {
+  
+  /**
+   * Create Gallery items based on PictureBox class
+   * @param {Object[]} data
+   * @return {Object[]}
+   */
+  function buildNewImages(data) {
     var newImg, imgList = [];
     data.forEach(function( item ) {
       newImg = new PictureBox( item );
@@ -29,98 +35,143 @@
     });
     return imgList;
   }
-  // Render Images
-  function render( imgObjList ) {
-    imgObjList.forEach(function( img ) {
+  /**
+   * Render Gallery items
+   * @param {Object[]} imgObjList
+   */
+  function render(imgObjList) {
+    imgObjList.forEach(function(img) {
       img.render();
     });
   }
-  // Adding Custom Properties
-  function addCustomProps( data, props ) {
-    data.forEach(function( item ) {
-      //item.parent = props.parent;
+  /**
+   * Adding custom properties to gallery items
+   * @param {Object[]} data
+   * @param {Object} data
+   * @return {Object[]}
+   */
+  function addCustomProps(data, props) {
+    data.forEach(function(item) {
       for (var prop in props) {
         item[prop] = props[prop];
       }
     });
     return data;
   }
-  function addIdProps( data, id ) {
+  /**
+   * Adding ID properties to gallery items
+   * @param {Object[]} data
+   * @return {string}
+   */
+  function addIdProps(data) {
     data.forEach(function ( item ) {
       item.id = generateId();
     });
     return data;
   }
   /**
+   * Unique ID generator
    * @param {}
    * @return {string}
    */
   function generateId() {
-    return '' + Date.now() + Math.floor( Math.random() * 100000 );
+    return '' + Date.now() + Math.floor(Math.random() * 100000);
   }
-  function sortByHearts( data ) {
-    data.sort(function( a, b ) {
+  /**
+   * Soring PictureBox instances by count of hearts
+   * @param {Object[]} data
+   * @return {Object[]} 
+   */  
+  function sortByHearts(data) {
+    data.sort(function(a, b) {
       return b.hearts - a.hearts;
     });
     return data;
-  } 
-  function func( value ) {
-    var h;
-    console.log( value.id + '  ' + value.hearts);
-    h = findObjByIDProp( this._data, value.id );
-    console.log(h);
   }
-  function findObjByIDProp( arr, id ) {
+  /**
+   * Callback function which reat on changing count of heatrs of photos
+   * @param {Object}
+   */
+  function onChangeHearts(value) {
+    var h;
+    h = findObjByIDProp(this._data, value.id);
+    h.hearts = value.hearts;
+    updateGallery.call(this);
+  }
+  /**
+   * Update Gallery
+   */
+  function updateGallery() {
+    var data = this._data;
+    data = sortByHearts(data);
+    this._imgList = buildNewImages(data);
+    this._wrapElement.innerHTML = '';
+    render( this._imgList );
+  }
+  /**
+   * Find Gallery Item by ID 
+   * @param {Object[]} arr
+   * @param {string} id
+   * @return {Object}
+   */
+  function findObjByIDProp(arr, id) {
     var a;
-    console.log( id );
     a = arr.filter(function( item ) {
-      if ( item.id === id ) {
+      if (item.id === id) {
         return true;
       }
     });
     return a[0];
   }
-
-  function addDataAndRender( data ) {
-    data = addCustomProps( data, { parent: this._wrapElement, onChanged: func.bind(this) } );
+  /**
+   * Init Gallery Items
+   * @param {Object[]} data
+   */
+  function initGalleryItems(data) {
+    data = addCustomProps( 
+      data, 
+      { 
+        parent: this._wrapElement, 
+        onChanged: onChangeHearts.bind(this) 
+      }
+    );
     data = addIdProps( data );
-    data = sortByHearts( data );
     this._data = data;
-    this._imgList = buildNewImages( this._data );
-    render( this._imgList );
   }
 
-  // Get data with AJAX
-  function connectWithXHR( url ) {
+  /**
+   * Get data via AJAX 
+   * @param {string} url
+   */
+  function connectWithXHR(url) {
     var self = this;
     var xhr = new XMLHttpRequest();
     var strData, data;
-    xhr.open( 'GET', url, true );
+    xhr.open('GET', url, true);
     xhr.timeout = MAX_TIME_OUT_REQUEST;
 
     xhr.send();
     
-    xhr.addEventListener( 'timeout', function ( ) {
-      console.log( 'I\'m sorry. Too long request' );
+    xhr.addEventListener('timeout', function() {
+      console.log('I\'m sorry. Too long request');
     });
-    xhr.addEventListener( 'readystatechange', function() {
+    xhr.addEventListener('readystatechange', function() {
 
-      if ( xhr.readyState !== 4 ) return;
+      if (xhr.readyState !== 4) return;
 
-      if ( xhr.status !== 200 ) {
-        console.log( 'Error: ' + xhr.status + ' ' + xhr.statusText );
+      if (xhr.status !== 200) {
+        console.log('Error: ' + xhr.status + ' ' + xhr.statusText);
         return;
       } else {
 
         strData = xhr.responseText;
-        data = JSON.parse( strData );
-        addDataAndRender.call( self, data );
+        data = JSON.parse(strData);
+        initGalleryItems.call(self, data);
+        updateGallery.call(self);
       }
     } );
-    
-
   }
 
   window.Gallery = Gallery;
-})( PictureBox );
+})(PictureBox);
 

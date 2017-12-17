@@ -1,6 +1,6 @@
 ;(function(){
   // Constructor
-  function PictureBox( settings ) {
+  function PictureBox(settings) {
     this._name = settings.name;
     this._src = settings.src;
     this._alt = settings.alt;
@@ -12,7 +12,7 @@
     this._onChanged = settings.onChanged;
     this._id = settings.id;
 
-    this._core = getImgElement( this._src, this._alt, this._title );
+    this._core = getImgElement(this._src, this._alt, this._title);
     
     // Events Initialisation 
     _initEvents.call(this);
@@ -41,8 +41,8 @@
    */
   PictureBox.prototype.render = function() {
     var box;
-    box = _imgBuildOut.call( this );
-    this._parent.appendChild( box );
+    box = _imgBuildOut.call(this);
+    this._parent.appendChild(box);
   };
 
 
@@ -82,28 +82,28 @@
    * @param {string} className
    * @param {object}
    */
-  function createElement( type, className ) {
-    var el = document.createElement( type );
-    if ( className && typeof className === 'string' ) {
+  function createElement(type, className) {
+    var el = document.createElement(type);
+    if (className && typeof className === 'string') {
       el.className = className;
     }
     return el;
   }
   function _imgBuildOut() {
     var pict, title, likes, pictInfo; 
-    pict = createElement( 'div', 'pict' );
-    title = createElement( 'span', 'pict__title' );
-    likes = createElement( 'span', 'pict__likes' );
-    pictInfo = createElement( 'div', 'pict__info' );
+    pict = createElement('div', 'pict');
+    title = createElement('span', 'pict__title');
+    likes = createElement('span', 'pict__likes');
+    pictInfo = createElement('div', 'pict__info');
     
     title.innerText = this._name;
     likes.innerText = this._likes;
 
-    pictInfo.appendChild( title );
-    pictInfo.appendChild( likes );
+    pictInfo.appendChild(title);
+    pictInfo.appendChild(likes);
 
-    pict.appendChild( this._core );
-    pict.appendChild( pictInfo );
+    pict.appendChild(this._core);
+    pict.appendChild(pictInfo);
     
     this._i_likes = likes;
     return pict; 
@@ -111,7 +111,12 @@
 
   
   function onChange() {
-    this._onChanged( { hearts: this._likes, id: this._id } );
+    this._onChanged(
+      {
+        hearts: this._likes,
+        id: this._id
+      }
+    );
   }
   /**
    * @param {}
@@ -120,10 +125,10 @@
   function _initEvents() {
     var self = this;
     this._core.addEventListener('click', function() {
-      _increaseLikesCount.call( self );
-      _updateLikesCount.call( self );
-      if ( self._onChanged ) {
-        onChange.call( self );
+      _increaseLikesCount.call(self);
+      _updateLikesCount.call(self);
+      if (self._onChanged) {
+        onChange.call(self);
       }
     });
   }
